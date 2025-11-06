@@ -151,6 +151,7 @@ export const PhotoUpload = forwardRef<HTMLInputElement, PhotoUploadProps>(({ fil
                 type="file"
                 accept="image/jpeg,image/jpg,image/png,image/webp"
                 onChange={handleFileChange}
+                ref={fileInputRef || ref}
                 className="flex-1"
               />
             </div>
