@@ -15,6 +15,7 @@ interface Settings {
   showLikes: boolean;
   showViews: boolean;
   showComments: boolean;
+  enableImageZoom: boolean;
   navbarTitleEnabled: boolean;
   navbarTitle: string;
   navbarColor: string;
