@@ -203,14 +203,15 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
               className="flex flex-col md:flex-row gap-0 h-full w-full"
             >
           {/* Image Section */}
-          <div className="relative bg-black flex items-center justify-center h-[50vh] md:h-full md:flex-1 overflow-hidden">
+          <div className="relative bg-black flex items-center justify-center h-[50vh] md:h-full md:flex-1 overflow-hidden p-4">
             <motion.img
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
               src={imageUrl}
               alt={photo.title}
-              className="w-full h-full object-contain"
+              className="max-w-full max-h-full object-contain"
+              style={{ width: 'auto', height: 'auto' }}
             />
           </div>
 
