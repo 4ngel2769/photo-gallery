@@ -72,6 +72,7 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
   const [loading, setLoading] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState('');
+  const [isZoomed, setIsZoomed] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
