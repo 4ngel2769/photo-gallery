@@ -194,15 +194,34 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
     : `${API_URL.replace('/api', '')}${photo.imageUrl}`;
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isOpen && (
         <Dialog open={isOpen} onOpenChange={onClose}>
           <DialogContent className="max-w-[95vw]! w-full h-[95vh] p-0 gap-0">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+              initial={{ opacity: 0, scale: 0.92, y: 40 }}
+              animate={{ 
+                opacity: 1, 
+                scale: 1, 
+                y: 0,
+                transition: {
+                  duration: 0.4,
+                  ease: [0.4, 0, 0.2, 1],
+                  scale: {
+                    delay: 0.1,
+                    duration: 0.3
+                  }
+                }
+              }}
+              exit={{ 
+                opacity: 0, 
+                scale: 0.95, 
+                y: 30,
+                transition: {
+                  duration: 0.3,
+                  ease: [0.4, 0, 1, 1]
+                }
+              }}
               className="flex flex-col md:flex-row gap-0 h-full w-full"
             >
           {/* Image Section */}

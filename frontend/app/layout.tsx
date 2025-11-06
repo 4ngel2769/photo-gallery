@@ -6,6 +6,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { Toaster } from "@/components/ui/sonner";
 import { Footer } from "@/components/footer";
+import { DynamicMetadata } from "@/components/dynamic-metadata";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,6 +41,7 @@ export default function RootLayout({
         >
           <AuthProvider>
             <SettingsProvider>
+              <DynamicMetadata />
               <div className="flex-1">
                 {children}
               </div>

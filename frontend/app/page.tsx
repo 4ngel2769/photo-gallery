@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Search } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, ChevronDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -12,6 +12,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { PhotoCard } from '@/components/photo-card';
 import { PhotoDialog } from '@/components/photo-dialog';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { useSettings } from '@/contexts/SettingsContext';
 import { photosAPI } from '@/lib/api';
 import { debounce, getSessionId } from '@/lib/utils-app';
 import { toast } from 'sonner';
@@ -41,6 +42,7 @@ interface Photo {
 }
 
 export default function Home() {
+  const { settings } = useSettings();
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
@@ -53,6 +55,7 @@ export default function Home() {
   
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [isToolbarExpanded, setIsToolbarExpanded] = useState(true);
 
   // Adjust columns based on screen size
   useEffect(() => {
@@ -151,16 +154,23 @@ export default function Home() {
     <AuthProvider>
       <div className="min-h-screen bg-background">
         {/* Header */}
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
           <div className="container mx-auto flex h-16 items-center justify-between px-4">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center gap-2"
             >
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Photo Gallery
-              </h1>
+              {settings.navbarTitleEnabled && (
+                <h1 
+                  className="text-2xl font-bold bg-clip-text text-transparent"
+                  style={{
+                    backgroundImage: `linear-gradient(to right, ${settings.navbarColor}, ${settings.navbarColorEnd})`
+                  }}
+                >
+                  {settings.navbarTitle}
+                </h1>
+              )}
             </motion.div>
 
             <div className="flex items-center gap-2">
@@ -170,82 +180,194 @@ export default function Home() {
         </header>
 
         {/* Filters */}
-        <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
           <div className="container mx-auto px-4 py-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              {/* Search */}
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Search photos..."
-                  className="pl-9"
-                  onChange={(e) => debouncedSearch(e.target.value)}
-                />
-              </div>
+            {/* Mobile Toggle Button */}
+            <div className="lg:hidden flex justify-center mb-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsToolbarExpanded(!isToolbarExpanded)}
+                className="gap-2"
+              >
+                Filters
+                <motion.div
+                  animate={{ rotate: isToolbarExpanded ? 180 : 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ChevronDown className="h-4 w-4" />
+                </motion.div>
+              </Button>
+            </div>
 
-              {/* Category Filter */}
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="landscape">Landscape</SelectItem>
-                  <SelectItem value="portrait">Portrait</SelectItem>
-                  <SelectItem value="wildlife">Wildlife</SelectItem>
-                  <SelectItem value="street">Street</SelectItem>
-                  <SelectItem value="architecture">Architecture</SelectItem>
-                  <SelectItem value="nature">Nature</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
+            {/* Desktop View - Always Visible */}
+            <div className="hidden lg:block">
+              <div className="flex flex-col sm:flex-row gap-4">
+                {/* Search */}
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder="Search photos..."
+                    className="pl-9"
+                    onChange={(e) => debouncedSearch(e.target.value)}
+                  />
+                </div>
 
-              {/* Mood Filter */}
-              <Select value={mood} onValueChange={setMood}>
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Mood" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Moods</SelectItem>
-                  <SelectItem value="warm">Warm</SelectItem>
-                  <SelectItem value="neutral">Neutral</SelectItem>
-                  <SelectItem value="cold">Cold</SelectItem>
-                  <SelectItem value="serene">Serene</SelectItem>
-                  <SelectItem value="vibrant">Vibrant</SelectItem>
-                  <SelectItem value="moody">Moody</SelectItem>
-                  <SelectItem value="dreamy">Dreamy</SelectItem>
-                </SelectContent>
-              </Select>
+                {/* Category Filter */}
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="landscape">Landscape</SelectItem>
+                    <SelectItem value="portrait">Portrait</SelectItem>
+                    <SelectItem value="wildlife">Wildlife</SelectItem>
+                    <SelectItem value="street">Street</SelectItem>
+                    <SelectItem value="architecture">Architecture</SelectItem>
+                    <SelectItem value="nature">Nature</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
 
-              {/* Sort */}
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="newest">Newest First</SelectItem>
-                  <SelectItem value="oldest">Oldest First</SelectItem>
-                  <SelectItem value="likes">Most Liked</SelectItem>
-                  <SelectItem value="views">Most Viewed</SelectItem>
-                </SelectContent>
-              </Select>
+                {/* Mood Filter */}
+                <Select value={mood} onValueChange={setMood}>
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Mood" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Moods</SelectItem>
+                    <SelectItem value="warm">Warm</SelectItem>
+                    <SelectItem value="neutral">Neutral</SelectItem>
+                    <SelectItem value="cold">Cold</SelectItem>
+                    <SelectItem value="serene">Serene</SelectItem>
+                    <SelectItem value="vibrant">Vibrant</SelectItem>
+                    <SelectItem value="moody">Moody</SelectItem>
+                    <SelectItem value="dreamy">Dreamy</SelectItem>
+                  </SelectContent>
+                </Select>
 
-              {/* Columns Slider */}
-              <div className="flex items-center gap-3 min-w-[200px]">
-                <Label htmlFor="columns" className="text-sm whitespace-nowrap">
-                  Columns: {columns}
-                </Label>
-                <Slider
-                  id="columns"
-                  min={1}
-                  max={5}
-                  step={1}
-                  value={[columns]}
-                  onValueChange={(value) => setColumns(value[0])}
-                  className="w-32"
-                />
+                {/* Sort */}
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="newest">Newest First</SelectItem>
+                    <SelectItem value="oldest">Oldest First</SelectItem>
+                    <SelectItem value="likes">Most Liked</SelectItem>
+                    <SelectItem value="views">Most Viewed</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* Columns Slider */}
+                <div className="flex items-center gap-3 min-w-[200px]">
+                  <Label htmlFor="columns" className="text-sm whitespace-nowrap">
+                    Columns: {columns}
+                  </Label>
+                  <Slider
+                    id="columns"
+                    min={1}
+                    max={5}
+                    step={1}
+                    value={[columns]}
+                    onValueChange={(value) => setColumns(value[0])}
+                    className="w-32"
+                  />
+                </div>
               </div>
             </div>
+
+            {/* Mobile View - Collapsible */}
+            <AnimatePresence>
+              {isToolbarExpanded && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  className="lg:hidden overflow-hidden"
+                >
+                  <div className="flex flex-col gap-4 pt-2">
+                    {/* Search */}
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        placeholder="Search photos..."
+                        className="pl-9"
+                        onChange={(e) => debouncedSearch(e.target.value)}
+                      />
+                    </div>
+
+                    {/* Bottom row with pickers and slider */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {/* Category Filter */}
+                      <Select value={category} onValueChange={setCategory}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Categories</SelectItem>
+                          <SelectItem value="landscape">Landscape</SelectItem>
+                          <SelectItem value="portrait">Portrait</SelectItem>
+                          <SelectItem value="wildlife">Wildlife</SelectItem>
+                          <SelectItem value="street">Street</SelectItem>
+                          <SelectItem value="architecture">Architecture</SelectItem>
+                          <SelectItem value="nature">Nature</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      {/* Mood Filter */}
+                      <Select value={mood} onValueChange={setMood}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Mood" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Moods</SelectItem>
+                          <SelectItem value="warm">Warm</SelectItem>
+                          <SelectItem value="neutral">Neutral</SelectItem>
+                          <SelectItem value="cold">Cold</SelectItem>
+                          <SelectItem value="serene">Serene</SelectItem>
+                          <SelectItem value="vibrant">Vibrant</SelectItem>
+                          <SelectItem value="moody">Moody</SelectItem>
+                          <SelectItem value="dreamy">Dreamy</SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      {/* Sort */}
+                      <Select value={sortBy} onValueChange={setSortBy}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sort by" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="newest">Newest First</SelectItem>
+                          <SelectItem value="oldest">Oldest First</SelectItem>
+                          <SelectItem value="likes">Most Liked</SelectItem>
+                          <SelectItem value="views">Most Viewed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Columns Slider */}
+                    <div className="flex items-center gap-3">
+                      <Label htmlFor="columns-mobile" className="text-sm whitespace-nowrap">
+                        Columns: {columns}
+                      </Label>
+                      <Slider
+                        id="columns-mobile"
+                        min={1}
+                        max={5}
+                        step={1}
+                        value={[columns]}
+                        onValueChange={(value) => setColumns(value[0])}
+                        className="flex-1"
+                      />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
