@@ -50,6 +50,8 @@ export const photosAPI = {
     api.post(`/photos/${id}/like`, { sessionId }),
   getLikeStatus: (id: string, sessionId?: string) =>
     api.get(`/photos/${id}/like-status`, { params: { sessionId } }),
+  trackView: (id: string, fingerprint: string) =>
+    api.post(`/photos/${id}/view`, { fingerprint }),
 };
 
 // Comments API
@@ -72,8 +74,34 @@ export const usersAPI = {
 export const themesAPI = {
   getActive: () => api.get('/themes/active'),
   getAll: () => api.get('/themes'),
-  createOrUpdate: (data: { name?: string; customCSS?: string; colors?: any }) =>
+  createOrUpdate: (data: { name?: string; customCSS?: string; colors?: Record<string, string> }) =>
     api.post('/themes', data),
+};
+
+// Settings API
+export const settingsAPI = {
+  get: () => api.get('/settings'),
+  update: (data: {
+    siteName?: string;
+    siteDescription?: string;
+    showLikes?: boolean;
+    showViews?: boolean;
+    showComments?: boolean;
+    navbarTitleEnabled?: boolean;
+    navbarTitle?: string;
+    navbarColor?: string;
+    navbarColorEnd?: string;
+    seoTitle?: string;
+    seoDescription?: string;
+    seoKeywords?: string;
+    ogImage?: string;
+    twitterHandle?: string;
+    socialLinks?: {
+      instagram?: string;
+      pixabay?: string;
+      pexels?: string;
+    };
+  }) => api.put('/settings', data),
 };
 
 export default api;
