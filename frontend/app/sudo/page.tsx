@@ -15,6 +15,7 @@ import { CommentModeration } from '@/components/admin/comment-moderation';
 import { ThemeCustomizer } from '@/components/admin/theme-customizer';
 import { UserManagement } from '@/components/admin/user-management';
 import { AdminStats } from '@/components/admin/admin-stats';
+import { ChangePasswordDialog } from '@/components/change-password-dialog';
 import { Loader2 } from 'lucide-react';
 
 export default function AdminPanel() {
@@ -22,6 +23,8 @@ export default function AdminPanel() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
+  const [mustChangePassword, setMustChangePassword] = useState(false);
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
@@ -40,13 +43,20 @@ export default function AdminPanel() {
     setError('');
 
     try {
-      const loggedInUser = await login(loginData.email, loginData.password);
-      if (loggedInUser.role !== 'admin') {
+      const result = await login(loginData.email, loginData.password);
+      
+      if (user?.role !== 'admin') {
         setError('You do not have admin privileges');
         return;
       }
+
+      // Check if password change is required
+      if (result.mustChangePassword) {
+        setMustChangePassword(true);
+        setShowPasswordChange(true);
+      }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Invalid credentials');
+      setError(err.message || 'Invalid credentials');
     } finally {
       setIsLoading(false);
     }
@@ -113,54 +123,67 @@ export default function AdminPanel() {
 
   // Admin Dashboard
   return (
-    <div className="min-h-screen bg-background">
-      <div className="border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-              <p className="text-muted-foreground">Welcome back, {user.displayName || user.username}</p>
+    <>
+      <div className="min-h-screen bg-background">
+        <div className="border-b">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+                <p className="text-muted-foreground">Welcome back, {user.displayName || user.username}</p>
+              </div>
+              <Button variant="outline" onClick={() => router.push('/')}>
+                View Gallery
+              </Button>
             </div>
-            <Button variant="outline" onClick={() => router.push('/')}>
-              View Gallery
-            </Button>
           </div>
+        </div>
+
+        <div className="container mx-auto px-4 py-8">
+          <AdminStats />
+
+          <Tabs defaultValue="upload" className="mt-8">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="upload">Upload</TabsTrigger>
+              <TabsTrigger value="photos">Photos</TabsTrigger>
+              <TabsTrigger value="comments">Comments</TabsTrigger>
+              <TabsTrigger value="users">Users</TabsTrigger>
+              <TabsTrigger value="theme">Theme</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="upload" className="mt-6">
+              <PhotoUpload />
+            </TabsContent>
+
+            <TabsContent value="photos" className="mt-6">
+              <PhotoManagement />
+            </TabsContent>
+
+            <TabsContent value="comments" className="mt-6">
+              <CommentModeration />
+            </TabsContent>
+
+            <TabsContent value="users" className="mt-6">
+              <UserManagement />
+            </TabsContent>
+
+            <TabsContent value="theme" className="mt-6">
+              <ThemeCustomizer />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <AdminStats />
-
-        <Tabs defaultValue="upload" className="mt-8">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="upload">Upload</TabsTrigger>
-            <TabsTrigger value="photos">Photos</TabsTrigger>
-            <TabsTrigger value="comments">Comments</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
-            <TabsTrigger value="theme">Theme</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="upload" className="mt-6">
-            <PhotoUpload />
-          </TabsContent>
-
-          <TabsContent value="photos" className="mt-6">
-            <PhotoManagement />
-          </TabsContent>
-
-          <TabsContent value="comments" className="mt-6">
-            <CommentModeration />
-          </TabsContent>
-
-          <TabsContent value="users" className="mt-6">
-            <UserManagement />
-          </TabsContent>
-
-          <TabsContent value="theme" className="mt-6">
-            <ThemeCustomizer />
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
+      {/* Forced Password Change Dialog */}
+      <ChangePasswordDialog
+        open={showPasswordChange}
+        onOpenChange={(open) => {
+          if (!mustChangePassword) {
+            setShowPasswordChange(open);
+          }
+        }}
+        forced={mustChangePassword}
+      />
+    </>
   );
 }

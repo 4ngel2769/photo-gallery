@@ -10,14 +10,16 @@ interface User {
   displayName: string;
   role: 'user' | 'admin';
   profilePicture?: string;
+  mustChangePassword?: boolean;
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<{ mustChangePassword: boolean }>;
   register: (username: string, email: string, password: string, displayName?: string) => Promise<void>;
   logout: () => void;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   isAuthenticated: boolean;
   isAdmin: boolean;
 }
@@ -51,6 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await authAPI.login({ email, password });
       localStorage.setItem('token', response.data.token);
       setUser(response.data.user);
+      return { mustChangePassword: response.data.mustChangePassword || false };
     } catch (error: any) {
       throw new Error(error.response?.data?.error?.message || 'Login failed');
     }
@@ -66,6 +69,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const changePassword = async (currentPassword: string, newPassword: string) => {
+    try {
+      const response = await authAPI.changePassword({ currentPassword, newPassword });
+      setUser(response.data.user);
+    } catch (error: any) {
+      throw new Error(error.response?.data?.error?.message || 'Failed to change password');
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
@@ -77,6 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     login,
     register,
     logout,
+    changePassword,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin',
   };

@@ -91,7 +91,8 @@ router.post('/login', [
 
     res.json({
       user: user.toJSON(),
-      token
+      token,
+      mustChangePassword: user.mustChangePassword || false
     });
   } catch (error) {
     res.status(500).json({ error: { message: error.message } });
@@ -104,6 +105,48 @@ router.post('/login', [
 router.get('/me', protect, async (req, res) => {
   try {
     res.json(req.user.toJSON());
+  } catch (error) {
+    res.status(500).json({ error: { message: error.message } });
+  }
+});
+
+// @route   POST /api/auth/change-password
+// @desc    Change user password
+// @access  Private
+router.post('/change-password', [
+  protect,
+  body('currentPassword').notEmpty().withMessage('Current password is required'),
+  body('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ error: { message: 'User not found' } });
+    }
+
+    // Verify current password
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(401).json({ error: { message: 'Current password is incorrect' } });
+    }
+
+    // Update password
+    user.password = newPassword;
+    user.mustChangePassword = false;
+    user.lastPasswordChange = new Date();
+    await user.save();
+
+    res.json({ 
+      message: 'Password changed successfully',
+      user: user.toJSON()
+    });
   } catch (error) {
     res.status(500).json({ error: { message: error.message } });
   }
