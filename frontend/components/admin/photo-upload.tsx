@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,7 +11,11 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { photosAPI } from '@/lib/api';
 import { Upload, Loader2, CheckCircle2 } from 'lucide-react';
 
-export function PhotoUpload() {
+interface PhotoUploadProps {
+  fileInputRef?: React.RefObject<HTMLInputElement>;
+}
+
+export const PhotoUpload = forwardRef<HTMLInputElement, PhotoUploadProps>(({ fileInputRef }, ref) => {
   const [isUploading, setIsUploading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -80,7 +84,12 @@ export function PhotoUpload() {
       if (formData.dateTaken) uploadFormData.append('dateTaken', formData.dateTaken);
       if (formData.width) uploadFormData.append('width', formData.width);
       if (formData.height) uploadFormData.append('height', formData.height);
-      if (formData.tags) uploadFormData.append('tags', formData.tags);
+      
+      // Convert comma-separated tags to JSON array
+      if (formData.tags) {
+        const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+        uploadFormData.append('tags', JSON.stringify(tagsArray));
+      }
 
       await photosAPI.create(uploadFormData);
       
@@ -334,4 +343,7 @@ export function PhotoUpload() {
       </CardContent>
     </Card>
   );
-}
+});
+
+PhotoUpload.displayName = 'PhotoUpload';
+

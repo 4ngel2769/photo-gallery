@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -16,6 +16,7 @@ import { ThemeCustomizer } from '@/components/admin/theme-customizer';
 import { UserManagement } from '@/components/admin/user-management';
 import { AdminStats } from '@/components/admin/admin-stats';
 import { ChangePasswordDialog } from '@/components/change-password-dialog';
+import { DragDropZone } from '@/components/admin/drag-drop-zone';
 import { Loader2 } from 'lucide-react';
 
 export default function AdminPanel() {
@@ -25,10 +26,29 @@ export default function AdminPanel() {
   const [error, setError] = useState('');
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [mustChangePassword, setMustChangePassword] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
   });
+
+  const handleFilesDropped = (files: FileList) => {
+    // Trigger the file input in PhotoUpload component
+    // We'll need to pass this to PhotoUpload via a ref or callback
+    if (fileInputRef.current) {
+      const dt = new DataTransfer();
+      Array.from(files).forEach(file => dt.items.add(file));
+      fileInputRef.current.files = dt.files;
+      
+      // Trigger change event
+      const event = new Event('change', { bubbles: true });
+      fileInputRef.current.dispatchEvent(event);
+      
+      // Switch to upload tab
+      const uploadTab = document.querySelector('[value="upload"]') as HTMLButtonElement;
+      if (uploadTab) uploadTab.click();
+    }
+  };
 
   // Check if user is admin
   useEffect(() => {

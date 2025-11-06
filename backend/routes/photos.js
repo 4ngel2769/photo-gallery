@@ -10,7 +10,7 @@ const router = express.Router();
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = 'uploads/photos';
+    const uploadDir = process.env.UPLOAD_DIR || 'uploads/photos';
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
@@ -116,7 +116,8 @@ router.post('/', protect, admin, upload.single('image'), async (req, res) => {
       return res.status(400).json({ error: { message: 'No image file provided' } });
     }
 
-    const imageUrl = `/uploads/photos/${req.file.filename}`;
+    const uploadDir = process.env.UPLOAD_DIR || 'uploads/photos';
+    const imageUrl = `/${uploadDir}/${req.file.filename}`;
 
     const photo = new Photo({
       title: req.body.title,
