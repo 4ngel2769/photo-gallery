@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Eye, MapPin, Calendar } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/lib/utils-app';
 import { useSettings } from '@/contexts/SettingsContext';
@@ -64,41 +63,8 @@ export function PhotoCard({ photo, onClick, isLiked = false }: PhotoCardProps) {
             onLoad={() => setImageLoaded(true)}
           />
 
-          {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-          {/* Mood badge */}
-          {photo.mood && (
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="absolute top-3 left-3"
-            >
-              <Badge variant="secondary" className="backdrop-blur-sm bg-background/80">
-                {photo.mood}
-              </Badge>
-            </motion.div>
-          )}
-
-          {/* Category badge */}
-          {photo.category && (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="absolute top-3 right-3"
-            >
-              <Badge className="backdrop-blur-sm">
-                {photo.category}
-              </Badge>
-            </motion.div>
-          )}
-
-          {/* Stats overlay */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileHover={{ opacity: 1, y: 0 }}
-            className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-all duration-300"
-          >
+          {/* Overlay - now covers entire image */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
             <div className="space-y-2">
               <h3 className="font-semibold text-white text-lg line-clamp-1">
                 {photo.title}
@@ -111,14 +77,18 @@ export function PhotoCard({ photo, onClick, isLiked = false }: PhotoCardProps) {
               )}
 
               <div className="flex items-center gap-4 text-white/90 text-sm">
-                <div className="flex items-center gap-1.5">
-                  <Heart className={cn("h-4 w-4", isLiked && "fill-red-500 text-red-500")} />
-                  <span>{photo.likes}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Eye className="h-4 w-4" />
-                  <span>{photo.views}</span>
-                </div>
+                {settings.showLikes && (
+                  <div className="flex items-center gap-1.5">
+                    <Heart className={cn("h-4 w-4", isLiked && "fill-red-500 text-red-500")} />
+                    <span>{photo.likes}</span>
+                  </div>
+                )}
+                {settings.showViews && (
+                  <div className="flex items-center gap-1.5">
+                    <Eye className="h-4 w-4" />
+                    <span>{photo.views}</span>
+                  </div>
+                )}
               </div>
 
               {(photo.location || photo.dateTaken) && (
@@ -138,7 +108,7 @@ export function PhotoCard({ photo, onClick, isLiked = false }: PhotoCardProps) {
                 </div>
               )}
             </div>
-          </motion.div>
+          </div>
         </div>
       </Card>
     </motion.div>
