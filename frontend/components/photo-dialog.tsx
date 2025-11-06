@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ZoomCursor } from '@/components/ui/zoom-cursor';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { formatDate, getGravatarUrl, getSessionId } from '@/lib/utils-app';
@@ -205,18 +206,23 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
               className="flex flex-col md:flex-row gap-0 h-full w-full"
             >
           {/* Image Section */}
-          <div className="relative bg-black flex items-center justify-center h-[50vh] md:h-full md:flex-1 overflow-hidden">
+          <div 
+            className="relative bg-black flex items-center justify-center h-[50vh] md:h-full md:flex-1 overflow-hidden"
+            style={{
+              cursor: settings.enableImageZoom ? 'none' : 'default',
+            }}
+          >
+            {/* Custom Zoom Cursor */}
+            {settings.enableImageZoom && (
+              <ZoomCursor isActive={true} isZoomed={isZoomed} />
+            )}
+            
             <motion.div
               className="w-full h-full flex items-center justify-center p-4"
               animate={{
                 scale: isZoomed ? 2 : 1,
               }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              style={{
-                cursor: settings.enableImageZoom 
-                  ? (isZoomed ? 'zoom-out' : 'zoom-in')
-                  : 'default',
-              }}
               onClick={() => {
                 if (settings.enableImageZoom) {
                   setIsZoomed(!isZoomed);
@@ -229,9 +235,11 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
                 transition={{ duration: 0.3 }}
                 src={imageUrl}
                 alt={photo.title}
-                className="max-w-full max-h-full object-contain"
+                className="object-contain"
                 style={{ 
-                  width: 'auto', 
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  width: 'auto',
                   height: 'auto',
                   pointerEvents: 'none'
                 }}

@@ -14,10 +14,8 @@ export function ZoomCursor({ isActive, isZoomed }: ZoomCursorProps) {
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (isActive) {
-        setPosition({ x: e.clientX, y: e.clientY });
-        setIsVisible(true);
-      }
+      setPosition({ x: e.clientX, y: e.clientY });
+      if (!isVisible) setIsVisible(true);
     };
 
     const handleMouseLeave = () => {
@@ -27,15 +25,15 @@ export function ZoomCursor({ isActive, isZoomed }: ZoomCursorProps) {
     if (isActive) {
       window.addEventListener('mousemove', handleMouseMove);
       window.addEventListener('mouseleave', handleMouseLeave);
-    } else {
-      setIsVisible(false);
+      
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseleave', handleMouseLeave);
+      };
     }
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, [isActive]);
+    
+    return undefined;
+  }, [isActive, isVisible]);
 
   return (
     <AnimatePresence>
@@ -45,7 +43,7 @@ export function ZoomCursor({ isActive, isZoomed }: ZoomCursorProps) {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
           transition={{ duration: 0.15 }}
-          className="fixed pointer-events-none z-[9999]"
+          className="fixed pointer-events-none z-9999"
           style={{
             left: position.x,
             top: position.y,
