@@ -24,6 +24,10 @@ const settingsSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  enableImageZoom: {
+    type: Boolean,
+    default: true
+  },
   
   // Navbar Settings
   navbarTitleEnabled: {
