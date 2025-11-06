@@ -12,7 +12,7 @@ import { photosAPI } from '@/lib/api';
 import { Upload, Loader2, CheckCircle2 } from 'lucide-react';
 
 interface PhotoUploadProps {
-  fileInputRef?: React.RefObject<HTMLInputElement>;
+  fileInputRef?: React.RefObject<HTMLInputElement | null>;
 }
 
 export const PhotoUpload = forwardRef<HTMLInputElement, PhotoUploadProps>(({ fileInputRef }, ref) => {

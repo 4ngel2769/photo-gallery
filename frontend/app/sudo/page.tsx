@@ -26,7 +26,7 @@ export default function AdminPanel() {
   const [error, setError] = useState('');
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [mustChangePassword, setMustChangePassword] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
