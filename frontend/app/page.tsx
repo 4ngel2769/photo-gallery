@@ -438,12 +438,12 @@ export default function Home() {
           onClose={() => setSelectedPhoto(null)}
         />
 
-        {/* Footer */}
+        {/* Footer
         <footer className="border-t py-8 mt-16">
           <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
             <p>© 2024 Photo Gallery. All rights reserved.</p>
           </div>
-        </footer>
+        </footer> */}
       </div>
     </AuthProvider>
   );

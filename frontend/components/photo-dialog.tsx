@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Eye, MapPin, Calendar, Camera, MessageSquare, Send, Trash2, Edit2 } from 'lucide-react';
+import { Heart, Eye, MapPin, Calendar, Camera, MessageSquare, Send, Trash2, Edit2, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -222,11 +222,11 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
                   ease: [0.4, 0, 1, 1]
                 }
               }}
-              className="flex flex-col md:flex-row gap-0 h-full w-full"
+              className="relative h-full w-full"
             >
-          {/* Image Section */}
+          {/* Image Section - Full Screen */}
           <div 
-            className="relative bg-black flex items-center justify-center h-[50vh] md:h-full md:flex-1 overflow-hidden"
+            className="absolute inset-0 bg-black flex items-center justify-center overflow-hidden"
             style={{
               cursor: settings.enableImageZoom ? 'none' : 'default',
             }}
@@ -254,10 +254,8 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
                 transition={{ duration: 0.3 }}
                 src={imageUrl}
                 alt={photo.title}
-                className="object-contain"
+                className="max-w-full max-h-full object-contain"
                 style={{ 
-                  maxWidth: '100%',
-                  maxHeight: '100%',
                   width: 'auto',
                   height: 'auto',
                   pointerEvents: 'none'
@@ -266,29 +264,48 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
             </motion.div>
           </div>
 
-          {/* Details Section */}
-          <div className="flex flex-col h-[45vh] md:h-full md:w-[400px] lg:w-[450px] bg-background shrink-0">
-            <DialogHeader className="px-6 py-4 border-b shrink-0">
-              <DialogTitle className="text-2xl">{photo.title}</DialogTitle>
-            </DialogHeader>
+          {/* Details Overlay */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            className="absolute bottom-0 left-0 right-0 md:top-0 md:left-auto md:right-0 md:bottom-0 md:w-[400px] lg:w-[450px] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 h-[40vh] md:h-full"
+          >
+            <ScrollArea className="h-full">
+              <div className="p-6 space-y-6">
+                {/* Header */}
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <h2 className="text-xl font-semibold leading-tight">
+                      {photo.title || 'Untitled Photo'}
+                    </h2>
+                    {photo.description && (
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        {photo.description}
+                      </p>
+                    )}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={onClose}
+                    className="shrink-0"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
 
-            <ScrollArea className="flex-1 px-6 py-4">
-              <div className="space-y-6">
-                {/* Description */}
-                {photo.description && (
-                  <p className="text-muted-foreground">{photo.description}</p>
-                )}
-
-                {/* Stats */}
-                <div className="flex items-center gap-6">
+                {/* Actions */}
+                <div className="flex items-center gap-4">
                   {settings.showLikes && (
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={handleLike}
-                      className={cn("gap-2", isLiked && "text-red-500")}
+                      disabled={loading}
+                      className="gap-2"
                     >
-                      <Heart className={cn("h-5 w-5", isLiked && "fill-current")} />
+                      <Heart className={`h-5 w-5 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
                       <span>{likes}</span>
                     </Button>
                   )}
@@ -486,7 +503,6 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
                 </div>
               </div>
             </ScrollArea>
-          </div>
         </motion.div>
       </DialogContent>
     </Dialog>
