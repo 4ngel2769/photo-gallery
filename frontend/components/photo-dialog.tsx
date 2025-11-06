@@ -136,7 +136,7 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
     e.preventDefault();
     
     if (!isAuthenticated) {
-      setShowAuthPrompt(true);
+      toast.error('Please log in to comment');
       return;
     }
 
@@ -148,7 +148,7 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
       setNewComment('');
       await loadComments();
       toast.success('Comment posted!');
-    } catch (error) {
+    } catch {
       toast.error('Failed to post comment');
     } finally {
       setLoading(false);
@@ -165,7 +165,7 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
       setEditContent('');
       await loadComments();
       toast.success('Comment updated!');
-    } catch (error) {
+    } catch {
       toast.error('Failed to update comment');
     } finally {
       setLoading(false);
