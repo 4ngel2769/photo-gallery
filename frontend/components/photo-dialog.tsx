@@ -203,18 +203,22 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
               {photo.description || 'View photo details, comments, and metadata'}
             </DialogDescription>
             
-            <div className="flex flex-col md:flex-row h-full">
+            <div className="flex flex-col md:flex-row h-full w-full">
               {/* Image Container - Left Side */}
-              <div className="flex-1 bg-black flex items-center justify-center p-4 md:p-8 min-h-[300px] md:min-h-full">
+              <div className="flex-1 bg-black flex items-center justify-center p-4 md:p-8 min-h-[50vh] md:h-full">
                 <img
                   src={imageUrl}
-                  alt={photo.title}
-                  className="w-auto h-auto max-w-full max-h-full object-contain"
+                  alt={photo.title || 'Photo'}
+                  className="max-w-full max-h-full object-contain"
+                  onError={(e) => {
+                    console.error('Image failed to load:', imageUrl);
+                    e.currentTarget.style.display = 'none';
+                  }}
                 />
               </div>
 
               {/* Details Section - Right Side */}
-              <div className="w-full md:w-[400px] lg:w-[450px] border-l">
+              <div className="w-full md:w-[400px] lg:w-[450px] border-l h-[400px] md:h-full overflow-hidden">
                 <ScrollArea className="h-full">
                   <div className="p-6 space-y-6">
                     {/* Header */}

@@ -28,7 +28,7 @@ import md5 from 'md5';
 
 interface Comment {
   _id: string;
-  text: string;
+  content: string;
   user: {
     _id: string;
     username: string;
@@ -170,7 +170,7 @@ export function CommentModeration() {
                         </div>
                       </TableCell>
                       <TableCell className="max-w-md">
-                        <p className="line-clamp-2">{comment.text}</p>
+                        <p className="line-clamp-2">{comment.content}</p>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">

@@ -181,10 +181,22 @@ export function PhotoManagement() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <Button variant="ghost" size="icon" title="View">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            title="View"
+                            onClick={() => window.open(`/?photo=${photo._id}`, '_blank')}
+                          >
                             <Eye className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" title="Edit">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            title="Edit"
+                            onClick={() => {
+                              toast.info('Edit functionality coming soon');
+                            }}
+                          >
                             <Pencil className="h-4 w-4" />
                           </Button>
                           <Button
