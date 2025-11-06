@@ -205,11 +205,11 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
             
             <div className="flex flex-col md:flex-row h-full">
               {/* Image Container - Left Side */}
-              <div className="flex-1 bg-black flex items-center justify-center p-8">
+              <div className="flex-1 bg-black flex items-center justify-center p-4 md:p-8 min-h-[300px] md:min-h-full">
                 <img
                   src={imageUrl}
                   alt={photo.title}
-                  className="max-w-full max-h-full object-contain"
+                  className="w-auto h-auto max-w-full max-h-full object-contain"
                 />
               </div>
 
