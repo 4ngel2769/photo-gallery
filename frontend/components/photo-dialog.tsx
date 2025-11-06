@@ -2,17 +2,15 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Eye, MapPin, Calendar, Camera, MessageSquare, Send, Trash2, Edit2, X } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Heart, Eye, MapPin, Calendar, Camera, MessageSquare, Send, Trash2, Edit2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ZoomCursor } from '@/components/ui/zoom-cursor';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
 import { formatDate, getGravatarUrl, getSessionId } from '@/lib/utils-app';
 import { photosAPI, commentsAPI } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
@@ -73,7 +71,6 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
   const [loading, setLoading] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState('');
-  const [isZoomed, setIsZoomed] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -197,103 +194,40 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
     <AnimatePresence mode="wait">
       {isOpen && (
         <Dialog open={isOpen} onOpenChange={onClose}>
-          <DialogContent className="max-w-[95vw]! w-full h-[95vh] p-0 gap-0">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.92, y: 40 }}
-              animate={{ 
-                opacity: 1, 
-                scale: 1, 
-                y: 0,
-                transition: {
-                  duration: 0.4,
-                  ease: [0.4, 0, 0.2, 1],
-                  scale: {
-                    delay: 0.1,
-                    duration: 0.3
-                  }
-                }
-              }}
-              exit={{ 
-                opacity: 0, 
-                scale: 0.95, 
-                y: 30,
-                transition: {
-                  duration: 0.3,
-                  ease: [0.4, 0, 1, 1]
-                }
-              }}
-              className="relative h-full w-full"
-            >
-          {/* Image Section - Full Screen */}
-          <div 
-            className="absolute inset-0 bg-black flex items-center justify-center overflow-hidden"
-            style={{
-              cursor: settings.enableImageZoom ? 'none' : 'default',
-            }}
-          >
-            {/* Custom Zoom Cursor */}
-            {settings.enableImageZoom && (
-              <ZoomCursor isActive={true} isZoomed={isZoomed} />
-            )}
+          <DialogContent className="max-w-7xl w-[95vw] h-[95vh] p-0 gap-0">
+            {/* Screen reader only title and description */}
+            <DialogTitle className="sr-only">
+              {photo.title || 'Photo View'}
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              {photo.description || 'View photo details, comments, and metadata'}
+            </DialogDescription>
             
-            <motion.div
-              className="w-full h-full flex items-center justify-center p-4"
-              animate={{
-                scale: isZoomed ? 2 : 1,
-              }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              onClick={() => {
-                if (settings.enableImageZoom) {
-                  setIsZoomed(!isZoomed);
-                }
-              }}
-            >
-              <motion.img
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
-                src={imageUrl}
-                alt={photo.title}
-                className="max-w-full max-h-full object-contain"
-                style={{ 
-                  width: 'auto',
-                  height: 'auto',
-                  pointerEvents: 'none'
-                }}
-              />
-            </motion.div>
-          </div>
+            <div className="flex flex-col md:flex-row h-full">
+              {/* Image Container - Left Side */}
+              <div className="flex-1 bg-black flex items-center justify-center p-8">
+                <img
+                  src={imageUrl}
+                  alt={photo.title}
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
 
-          {/* Details Overlay */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            className="absolute bottom-0 left-0 right-0 md:top-0 md:left-auto md:right-0 md:bottom-0 md:w-[400px] lg:w-[450px] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 h-[40vh] md:h-full"
-          >
-            <ScrollArea className="h-full">
-              <div className="p-6 space-y-6">
-                {/* Header */}
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <h2 className="text-xl font-semibold leading-tight">
-                      {photo.title || 'Untitled Photo'}
-                    </h2>
-                    {photo.description && (
-                      <p className="text-muted-foreground text-sm leading-relaxed">
-                        {photo.description}
-                      </p>
-                    )}
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={onClose}
-                    className="shrink-0"
-                  >
-                    <X className="h-5 w-5" />
-                  </Button>
-                </div>
+              {/* Details Section - Right Side */}
+              <div className="w-full md:w-[400px] lg:w-[450px] border-l">
+                <ScrollArea className="h-full">
+                  <div className="p-6 space-y-6">
+                    {/* Header */}
+                    <div className="space-y-1">
+                      <h2 className="text-xl font-semibold leading-tight">
+                        {photo.title || 'Untitled Photo'}
+                      </h2>
+                      {photo.description && (
+                        <p className="text-muted-foreground text-sm leading-relaxed">
+                          {photo.description}
+                        </p>
+                      )}
+                    </div>
 
                 {/* Actions */}
                 <div className="flex items-center gap-4">
@@ -502,11 +436,11 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
                   </div>
                 </div>
               </div>
-            </ScrollArea>
-          </motion.div>
-        </motion.div>
-      </DialogContent>
-    </Dialog>
+                </ScrollArea>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
     </AnimatePresence>
   );

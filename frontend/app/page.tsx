@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -144,11 +144,16 @@ export default function Home() {
     setLikedPhotos(liked);
   };
 
-  const debouncedSearch = debounce((query: string) => {
+  const searchFunction = (query: string) => {
     setSearchQuery(query);
     setPage(1);
     loadPhotos(true);
-  }, 500);
+  };
+
+  const debouncedSearch = useCallback(
+    (debounce as any)(searchFunction, 500),
+    []
+  );
 
   return (
     <AuthProvider>
