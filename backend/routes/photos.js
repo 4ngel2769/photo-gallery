@@ -3,6 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import Photo from '../models/Photo.js';
+import View from '../models/View.js';
 import { protect, admin, optionalAuth } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -97,11 +98,50 @@ router.get('/:id', optionalAuth, async (req, res) => {
       return res.status(404).json({ error: { message: 'Photo not found' } });
     }
 
-    // Increment views
-    photo.views += 1;
-    await photo.save();
-
     res.json(photo);
+  } catch (error) {
+    res.status(500).json({ error: { message: error.message } });
+  }
+});
+
+// @route   POST /api/photos/:id/view
+// @desc    Track a view for a photo
+// @access  Public
+router.post('/:id/view', async (req, res) => {
+  try {
+    const { fingerprint } = req.body;
+    
+    if (!fingerprint) {
+      return res.status(400).json({ error: { message: 'Fingerprint required' } });
+    }
+
+    const photo = await Photo.findById(req.params.id);
+    if (!photo) {
+      return res.status(404).json({ error: { message: 'Photo not found' } });
+    }
+
+    // Check if this fingerprint already viewed this photo recently (within 24 hours)
+    const recentView = await View.findOne({
+      photoId: req.params.id,
+      fingerprint,
+      viewedAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
+    });
+
+    if (!recentView) {
+      // Create new view record
+      await View.create({
+        photoId: req.params.id,
+        fingerprint,
+        ipAddress: req.ip || req.connection.remoteAddress || 'unknown',
+        userAgent: req.headers['user-agent'] || 'unknown'
+      });
+
+      // Increment photo views count
+      photo.views += 1;
+      await photo.save();
+    }
+
+    res.json({ views: photo.views, viewed: !recentView });
   } catch (error) {
     res.status(500).json({ error: { message: error.message } });
   }

@@ -13,6 +13,7 @@ import userRoutes from './routes/users.js';
 import commentRoutes from './routes/comments.js';
 import authRoutes from './routes/auth.js';
 import themeRoutes from './routes/themes.js';
+import settingsRoutes from './routes/settings.js';
 
 // Load environment variables
 dotenv.config();
@@ -60,6 +61,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/themes', themeRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

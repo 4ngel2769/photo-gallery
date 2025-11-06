@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
@@ -52,6 +53,27 @@ export default function Home() {
   
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+
+  // Adjust columns based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width < 640) {
+        setColumns(1); // mobile
+      } else if (width < 768) {
+        setColumns(Math.min(columns, 2)); // small tablet
+      } else if (width < 1024) {
+        setColumns(Math.min(columns, 3)); // tablet
+      } else if (width < 1280) {
+        setColumns(Math.min(columns, 4)); // desktop
+      }
+      // 5 columns allowed on xl screens and above
+    };
+
+    handleResize(); // Initial check
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [columns]);
 
   useEffect(() => {
     loadPhotos(true);
@@ -208,22 +230,20 @@ export default function Home() {
                 </SelectContent>
               </Select>
 
-              {/* Grid Size Toggle */}
-              <div className="flex gap-1">
-                <Button
-                  variant={gridSize === 'small' ? 'default' : 'outline'}
-                  size="icon"
-                  onClick={() => setGridSize('small')}
-                >
-                  <Grid3x3 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={gridSize === 'large' ? 'default' : 'outline'}
-                  size="icon"
-                  onClick={() => setGridSize('large')}
-                >
-                  <LayoutGrid className="h-4 w-4" />
-                </Button>
+              {/* Columns Slider */}
+              <div className="flex items-center gap-3 min-w-[200px]">
+                <Label htmlFor="columns" className="text-sm whitespace-nowrap">
+                  Columns: {columns}
+                </Label>
+                <Slider
+                  id="columns"
+                  min={1}
+                  max={5}
+                  step={1}
+                  value={[columns]}
+                  onValueChange={(value) => setColumns(value[0])}
+                  className="w-32"
+                />
               </div>
             </div>
           </div>
@@ -232,7 +252,12 @@ export default function Home() {
         {/* Photo Grid */}
         <main className="container mx-auto px-4 py-8">
           {loading && photos.length === 0 ? (
-            <div className={`columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4`}>
+            <div 
+              className="gap-4 space-y-4"
+              style={{ 
+                columnCount: columns,
+              }}
+            >
               {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="break-inside-avoid mb-4">
                   <Skeleton className="aspect-3/4 w-full rounded-lg" />
@@ -250,7 +275,12 @@ export default function Home() {
             </div>
           ) : (
             <>
-              <div className={`columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4`}>
+              <div 
+                className="gap-4"
+                style={{ 
+                  columnCount: columns,
+                }}
+              >
                 {photos.map((photo) => (
                   <div key={photo._id} className="break-inside-avoid mb-4">
                     <PhotoCard
