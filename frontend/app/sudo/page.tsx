@@ -172,7 +172,7 @@ export default function AdminPanel() {
             </TabsList>
 
             <TabsContent value="upload" className="mt-6">
-              <PhotoUpload />
+              <PhotoUpload fileInputRef={fileInputRef} />
             </TabsContent>
 
             <TabsContent value="photos" className="mt-6">
@@ -192,6 +192,9 @@ export default function AdminPanel() {
             </TabsContent>
           </Tabs>
         </div>
+        
+        {/* Full-screen drag and drop zone */}
+        <DragDropZone onFilesDropped={handleFilesDropped} />
       </div>
 
       {/* Forced Password Change Dialog */}
