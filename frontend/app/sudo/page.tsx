@@ -15,6 +15,7 @@ import { CommentModeration } from '@/components/admin/comment-moderation';
 import { ThemeCustomizer } from '@/components/admin/theme-customizer';
 import { UserManagement } from '@/components/admin/user-management';
 import { AdminStats } from '@/components/admin/admin-stats';
+import { SiteSettings } from '@/components/admin/site-settings';
 import { ChangePasswordDialog } from '@/components/change-password-dialog';
 import { DragDropZone } from '@/components/admin/drag-drop-zone';
 import { Loader2 } from 'lucide-react';
