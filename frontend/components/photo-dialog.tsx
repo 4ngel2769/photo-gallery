@@ -175,22 +175,22 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[95vw] w-full h-[95vh] p-0 gap-0">
-        <div className="flex flex-col md:flex-row gap-0 h-full">
+      <DialogContent className="!max-w-[95vw] w-full h-[95vh] p-0 gap-0">
+        <div className="flex flex-col md:flex-row gap-0 h-full w-full">
           {/* Image Section */}
-          <div className="relative bg-black flex items-center justify-center h-[50vh] md:h-full md:flex-1">
+          <div className="relative bg-black flex items-center justify-center h-[50vh] md:h-full md:flex-1 overflow-hidden">
             <motion.img
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
               src={imageUrl}
               alt={photo.title}
-              className="max-w-full max-h-full w-auto h-auto object-contain"
+              className="w-full h-full object-contain"
             />
           </div>
 
           {/* Details Section */}
-          <div className="flex flex-col h-[45vh] md:h-full md:w-[400px] lg:w-[450px] bg-background">
+          <div className="flex flex-col h-[45vh] md:h-full md:w-[400px] lg:w-[450px] bg-background shrink-0">
             <DialogHeader className="px-6 py-4 border-b shrink-0">
               <DialogTitle className="text-2xl">{photo.title}</DialogTitle>
             </DialogHeader>
