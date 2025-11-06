@@ -175,8 +175,8 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] p-0">
-        <div className="grid md:grid-cols-2 gap-0 h-full">
+      <DialogContent className="max-w-7xl max-h-[90vh] p-0">
+        <div className="grid md:grid-cols-[1.2fr,1fr] lg:grid-cols-[1.5fr,1fr] gap-0 h-full">
           {/* Image Section */}
           <div className="relative bg-black flex items-center justify-center">
             <motion.img
