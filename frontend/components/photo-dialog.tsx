@@ -503,6 +503,7 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
                 </div>
               </div>
             </ScrollArea>
+          </motion.div>
         </motion.div>
       </DialogContent>
     </Dialog>
