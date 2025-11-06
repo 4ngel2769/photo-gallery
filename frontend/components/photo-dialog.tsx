@@ -179,7 +179,7 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
       await commentsAPI.delete(commentId);
       await loadComments();
       toast.success('Comment deleted');
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete comment');
     }
   };
@@ -191,9 +191,17 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
     : `${API_URL.replace('/api', '')}${photo.imageUrl}`;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="!max-w-[95vw] w-full h-[95vh] p-0 gap-0">
-        <div className="flex flex-col md:flex-row gap-0 h-full w-full">
+    <AnimatePresence>
+      {isOpen && (
+        <Dialog open={isOpen} onOpenChange={onClose}>
+          <DialogContent className="max-w-[95vw]! w-full h-[95vh] p-0 gap-0">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="flex flex-col md:flex-row gap-0 h-full w-full"
+            >
           {/* Image Section */}
           <div className="relative bg-black flex items-center justify-center h-[50vh] md:h-full md:flex-1 overflow-hidden">
             <motion.img
@@ -221,23 +229,29 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
 
                 {/* Stats */}
                 <div className="flex items-center gap-6">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleLike}
-                    className={cn("gap-2", isLiked && "text-red-500")}
-                  >
-                    <Heart className={cn("h-5 w-5", isLiked && "fill-current")} />
-                    <span>{likes}</span>
-                  </Button>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Eye className="h-5 w-5" />
-                    <span>{photo.views}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <MessageSquare className="h-5 w-5" />
-                    <span>{comments.length}</span>
-                  </div>
+                  {settings.showLikes && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleLike}
+                      className={cn("gap-2", isLiked && "text-red-500")}
+                    >
+                      <Heart className={cn("h-5 w-5", isLiked && "fill-current")} />
+                      <span>{likes}</span>
+                    </Button>
+                  )}
+                  {settings.showViews && (
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Eye className="h-5 w-5" />
+                      <span>{views}</span>
+                    </div>
+                  )}
+                  {settings.showComments && (
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <MessageSquare className="h-5 w-5" />
+                      <span>{comments.length}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Tags & Badges */}
@@ -419,8 +433,10 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
               </div>
             </ScrollArea>
           </div>
-        </div>
+        </motion.div>
       </DialogContent>
     </Dialog>
+      )}
+    </AnimatePresence>
   );
 }
