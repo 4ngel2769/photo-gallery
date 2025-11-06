@@ -48,7 +48,7 @@ export default function Home() {
   const [category, setCategory] = useState<string>('all');
   const [mood, setMood] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('newest');
-  const [gridSize, setGridSize] = useState<'small' | 'large'>('small');
+  const [columns, setColumns] = useState<number>(3);
   
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
