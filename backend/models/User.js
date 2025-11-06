@@ -37,6 +37,14 @@ const userSchema = new mongoose.Schema({
   profilePicture: {
     type: String, // URL or Gravatar
     default: null
+  },
+  mustChangePassword: {
+    type: Boolean,
+    default: false
+  },
+  lastPasswordChange: {
+    type: Date,
+    default: null
   }
 }, {
   timestamps: true
