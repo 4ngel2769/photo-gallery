@@ -61,13 +61,13 @@ export function ChangePasswordDialog({ open, onOpenChange, forced = false }: Cha
       await changePassword(passwords.current, passwords.new);
       setSuccess(true);
       setPasswords({ current: '', new: '', confirm: '' });
-      
+
       setTimeout(() => {
         onOpenChange(false);
         setSuccess(false);
       }, 1500);
-    } catch (err: any) {
-      setError(err.message || 'Failed to change password');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to change password');
     } finally {
       setIsLoading(false);
     }

@@ -212,7 +212,7 @@ export function PhotoManagement() {
           <DialogHeader>
             <DialogTitle>Delete Photo</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{deleteDialog.photo?.title}"? This action cannot be undone.
+              Are you sure you want to delete &quot;{deleteDialog.photo?.title}&quot;? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

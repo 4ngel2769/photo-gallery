@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 import User from '../models/User.js';
 import { protect } from '../middleware/auth.js';
+import passport from '../config/passport.js';
 
 const router = express.Router();
 
@@ -151,5 +152,45 @@ router.post('/change-password', [
     res.status(500).json({ error: { message: error.message } });
   }
 });
+
+// @route   GET /api/auth/google
+// @desc    Initiate Google OAuth
+// @access  Public
+router.get('/google', passport.authenticate('google', { 
+  scope: ['profile', 'email'],
+  session: false 
+}));
+
+// @route   GET /api/auth/google/callback
+// @desc    Google OAuth callback
+// @access  Public
+router.get('/google/callback', 
+  passport.authenticate('google', { session: false, failureRedirect: `${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=oauth_failed` }),
+  (req, res) => {
+    const token = generateToken(req.user._id);
+    // Redirect to frontend with token
+    res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/auth/callback?token=${token}`);
+  }
+);
+
+// @route   GET /api/auth/github
+// @desc    Initiate GitHub OAuth
+// @access  Public
+router.get('/github', passport.authenticate('github', { 
+  scope: ['user:email'],
+  session: false 
+}));
+
+// @route   GET /api/auth/github/callback
+// @desc    GitHub OAuth callback
+// @access  Public
+router.get('/github/callback',
+  passport.authenticate('github', { session: false, failureRedirect: `${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=oauth_failed` }),
+  (req, res) => {
+    const token = generateToken(req.user._id);
+    // Redirect to frontend with token
+    res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/auth/callback?token=${token}`);
+  }
+);
 
 export default router;

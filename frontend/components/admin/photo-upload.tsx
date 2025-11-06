@@ -114,8 +114,13 @@ export const PhotoUpload = forwardRef<HTMLInputElement, PhotoUploadProps>(({ fil
       
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to upload photo');
+    } catch (err: unknown) {
+      let errorMessage = 'Failed to upload photo';
+      if (err && typeof err === 'object' && 'response' in err) {
+        const axiosErr = err as { response?: { data?: { message?: string } } };
+        errorMessage = axiosErr.response?.data?.message || errorMessage;
+      }
+      setError(errorMessage);
     } finally {
       setIsUploading(false);
     }

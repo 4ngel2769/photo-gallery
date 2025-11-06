@@ -17,6 +17,7 @@ import { photosAPI, commentsAPI } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSettings } from '@/contexts/SettingsContext';
 import { getFingerprint } from '@/lib/fingerprint';
+import Link from 'next/link';
 
 interface Photo {
   _id: string;
@@ -326,9 +327,11 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
                       <p className="text-sm text-muted-foreground mb-3">
                         Please sign in to comment
                       </p>
-                      <Button variant="outline" size="sm">
-                        Sign In
-                      </Button>
+                      <Link href="/login">
+                        <Button variant="outline" size="sm">
+                          Sign In
+                        </Button>
+                      </Link>
                     </div>
                   )}
 
