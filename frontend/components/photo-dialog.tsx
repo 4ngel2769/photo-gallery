@@ -81,8 +81,9 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
       const sessionId = getSessionId();
       const response = await photosAPI.getLikeStatus(photo._id, sessionId);
       setIsLiked(response.data.isLiked);
-    } catch {
-      console.error('Error checking like status');
+    } catch (error) {
+      // Silently fail - like status is not critical
+      console.debug('Could not check like status:', error);
     }
   }, [photo]);
 
@@ -92,8 +93,10 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
     try {
       const response = await commentsAPI.getByPhoto(photo._id);
       setComments(response.data);
-    } catch {
-      console.error('Error loading comments');
+    } catch (error) {
+      // Silently fail - comments will show as empty
+      console.debug('Could not load comments:', error);
+      setComments([]);
     }
   }, [photo]);
 
@@ -104,8 +107,9 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
       const fingerprint = getFingerprint();
       const response = await photosAPI.trackView(photo._id, fingerprint);
       setViews(response.data.views);
-    } catch {
-      console.error('Error tracking view');
+    } catch (error) {
+      // Silently fail - view tracking is not critical
+      console.debug('Could not track view:', error);
     }
   }, [photo]);
 
