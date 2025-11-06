@@ -62,24 +62,17 @@ interface PhotoDialogProps {
 
 export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
   const { user, isAuthenticated } = useAuth();
+  const { settings } = useSettings();
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(0);
+  const [views, setViews] = useState(0);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState('');
-  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-
-  useEffect(() => {
-    if (photo && isOpen) {
-      setLikes(photo.likes);
-      loadComments();
-      checkLikeStatus();
-    }
-  }, [photo, isOpen]);
 
   const checkLikeStatus = async () => {
     if (!photo) return;
@@ -88,8 +81,8 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
       const sessionId = getSessionId();
       const response = await photosAPI.getLikeStatus(photo._id, sessionId);
       setIsLiked(response.data.isLiked);
-    } catch (error) {
-      console.error('Error checking like status:', error);
+    } catch {
+      console.error('Error checking like status');
     }
   };
 
@@ -99,10 +92,32 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
     try {
       const response = await commentsAPI.getByPhoto(photo._id);
       setComments(response.data);
-    } catch (error) {
-      console.error('Error loading comments:', error);
+    } catch {
+      console.error('Error loading comments');
     }
   };
+
+  const trackView = async () => {
+    if (!photo) return;
+    
+    try {
+      const fingerprint = getFingerprint();
+      const response = await photosAPI.trackView(photo._id, fingerprint);
+      setViews(response.data.views);
+    } catch {
+      console.error('Error tracking view');
+    }
+  };
+
+  useEffect(() => {
+    if (photo && isOpen) {
+      setLikes(photo.likes);
+      setViews(photo.views);
+      loadComments();
+      checkLikeStatus();
+      trackView(); // Track view when dialog opens
+    }
+  }, [photo, isOpen]);
 
   const handleLike = async () => {
     if (!photo) return;
