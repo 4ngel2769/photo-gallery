@@ -46,7 +46,7 @@ export function PhotoCard({ photo, onClick, isLiked = false }: PhotoCardProps) {
       onClick={onClick}
     >
       <Card className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300">
-        <div className="relative aspect-[3/4] overflow-hidden bg-muted">
+        <div className="relative overflow-hidden bg-muted">
           {!imageLoaded && (
             <div className="absolute inset-0 animate-pulse bg-muted" />
           )}
@@ -55,9 +55,9 @@ export function PhotoCard({ photo, onClick, isLiked = false }: PhotoCardProps) {
             src={imageUrl}
             alt={photo.title}
             className={cn(
-              "h-full w-full object-cover transition-all duration-500",
+              "w-full h-auto object-contain transition-all duration-500",
               imageLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95",
-              "group-hover:scale-110"
+              "group-hover:scale-105"
             )}
             onLoad={() => setImageLoaded(true)}
           />
