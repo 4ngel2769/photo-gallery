@@ -175,23 +175,23 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl max-h-[90vh] p-0">
-        <div className="grid md:grid-cols-[1.2fr,1fr] lg:grid-cols-[1.5fr,1fr] gap-0 h-full">
+      <DialogContent className="max-w-[95vw] w-full h-[95vh] p-0 gap-0">
+        <div className="flex flex-col md:grid md:grid-cols-[1fr,400px] lg:grid-cols-[1fr,450px] gap-0 h-full">
           {/* Image Section */}
-          <div className="relative bg-black flex items-center justify-center">
+          <div className="relative bg-black flex items-center justify-center h-[50vh] md:h-full">
             <motion.img
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
               src={imageUrl}
               alt={photo.title}
-              className="w-full h-full object-contain"
+              className="max-w-full max-h-full w-auto h-auto object-contain"
             />
           </div>
 
           {/* Details Section */}
-          <div className="flex flex-col h-full">
-            <DialogHeader className="px-6 py-4 border-b">
+          <div className="flex flex-col h-[45vh] md:h-full bg-background">
+            <DialogHeader className="px-6 py-4 border-b shrink-0">
               <DialogTitle className="text-2xl">{photo.title}</DialogTitle>
             </DialogHeader>
 

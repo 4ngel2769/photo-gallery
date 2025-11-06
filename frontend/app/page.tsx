@@ -68,7 +68,14 @@ export default function Home() {
     
     setLoading(true);
     try {
-      const params: any = {
+      const params: {
+        page?: number;
+        limit?: number;
+        sort?: string;
+        category?: string;
+        mood?: string;
+        search?: string;
+      } = {
         page: isNewSearch ? 1 : page,
         limit: 12,
         sort: sortBy
@@ -224,13 +231,9 @@ export default function Home() {
         {/* Photo Grid */}
         <main className="container mx-auto px-4 py-8">
           {loading && photos.length === 0 ? (
-            <div className={`grid gap-4 ${
-              gridSize === 'small' 
-                ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6' 
-                : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
-            }`}>
+            <div className={`columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4`}>
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="space-y-3">
+                <div key={i} className="break-inside-avoid mb-4">
                   <Skeleton className="aspect-3/4 w-full rounded-lg" />
                 </div>
               ))}
@@ -246,18 +249,15 @@ export default function Home() {
             </div>
           ) : (
             <>
-              <div className={`grid gap-4 ${
-                gridSize === 'small' 
-                  ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6' 
-                  : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
-              }`}>
+              <div className={`columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4`}>
                 {photos.map((photo) => (
-                  <PhotoCard
-                    key={photo._id}
-                    photo={photo}
-                    onClick={() => setSelectedPhoto(photo)}
-                    isLiked={likedPhotos.has(photo._id)}
-                  />
+                  <div key={photo._id} className="break-inside-avoid mb-4">
+                    <PhotoCard
+                      photo={photo}
+                      onClick={() => setSelectedPhoto(photo)}
+                      isLiked={likedPhotos.has(photo._id)}
+                    />
+                  </div>
                 ))}
               </div>
 

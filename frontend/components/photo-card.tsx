@@ -42,20 +42,20 @@ export function PhotoCard({ photo, onClick, isLiked = false }: PhotoCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
       whileHover={{ y: -8 }}
-      className="group cursor-pointer"
+      className="group cursor-pointer w-full"
       onClick={onClick}
     >
-      <Card className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300">
-        <div className="relative overflow-hidden bg-muted">
+      <Card className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 p-0">
+        <div className="relative w-full bg-muted">
           {!imageLoaded && (
-            <div className="absolute inset-0 animate-pulse bg-muted" />
+            <div className="w-full aspect-4/3 animate-pulse bg-muted" />
           )}
           
           <motion.img
             src={imageUrl}
             alt={photo.title}
             className={cn(
-              "w-full h-auto object-contain transition-all duration-500",
+              "w-full h-auto block transition-all duration-500",
               imageLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95",
               "group-hover:scale-105"
             )}
@@ -63,7 +63,7 @@ export function PhotoCard({ photo, onClick, isLiked = false }: PhotoCardProps) {
           />
 
           {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
           {/* Mood badge */}
           {photo.mood && (
