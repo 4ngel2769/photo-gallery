@@ -164,12 +164,13 @@ export default function AdminPanel() {
           <AdminStats />
 
           <Tabs defaultValue="upload" className="mt-8">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="upload">Upload</TabsTrigger>
               <TabsTrigger value="photos">Photos</TabsTrigger>
               <TabsTrigger value="comments">Comments</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="theme">Theme</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
 
             <TabsContent value="upload" className="mt-6">
@@ -190,6 +191,10 @@ export default function AdminPanel() {
 
             <TabsContent value="theme" className="mt-6">
               <ThemeCustomizer />
+            </TabsContent>
+
+            <TabsContent value="settings" className="mt-6">
+              <SiteSettings />
             </TabsContent>
           </Tabs>
         </div>
