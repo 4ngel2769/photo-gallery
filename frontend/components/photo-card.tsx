@@ -64,7 +64,7 @@ export function PhotoCard({ photo, onClick, isLiked = false }: PhotoCardProps) {
           />
 
           {/* Overlay - now covers entire image */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+          <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
             <div className="space-y-2">
               <h3 className="font-semibold text-white text-lg line-clamp-1">
                 {photo.title}
