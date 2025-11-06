@@ -15,6 +15,8 @@ import { cn } from '@/lib/utils';
 import { formatDate, getGravatarUrl, getSessionId } from '@/lib/utils-app';
 import { photosAPI, commentsAPI } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSettings } from '@/contexts/SettingsContext';
+import { getFingerprint } from '@/lib/fingerprint';
 
 interface Photo {
   _id: string;
