@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/lib/utils-app';
+import { useSettings } from '@/contexts/SettingsContext';
 
 interface Photo {
   _id: string;
