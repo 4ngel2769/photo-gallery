@@ -22,8 +22,7 @@ const viewSchema = new mongoose.Schema({
   },
   viewedAt: {
     type: Date,
-    default: Date.now,
-    index: true
+    default: Date.now
   }
 }, {
   timestamps: true

@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Eye, MapPin, Calendar, Camera, MessageSquare, Send, Trash2, Edit2 } from 'lucide-react';
+import { Heart, Eye, MapPin, Calendar, Camera, MessageSquare, Send, Trash2, Edit2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -74,7 +74,7 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
-  const checkLikeStatus = async () => {
+  const checkLikeStatus = useCallback(async () => {
     if (!photo) return;
     
     try {
@@ -84,9 +84,9 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
     } catch {
       console.error('Error checking like status');
     }
-  };
+  }, [photo]);
 
-  const loadComments = async () => {
+  const loadComments = useCallback(async () => {
     if (!photo) return;
     
     try {
@@ -95,9 +95,9 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
     } catch {
       console.error('Error loading comments');
     }
-  };
+  }, [photo]);
 
-  const trackView = async () => {
+  const trackView = useCallback(async () => {
     if (!photo) return;
     
     try {
@@ -107,7 +107,7 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
     } catch {
       console.error('Error tracking view');
     }
-  };
+  }, [photo]);
 
   useEffect(() => {
     if (photo && isOpen) {
@@ -117,7 +117,7 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
       checkLikeStatus();
       trackView(); // Track view when dialog opens
     }
-  }, [photo, isOpen]);
+  }, [photo, isOpen, checkLikeStatus, loadComments, trackView]);
 
   const handleLike = async () => {
     if (!photo) return;
@@ -127,7 +127,7 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
       const response = await photosAPI.like(photo._id, sessionId);
       setIsLiked(response.data.isLiked);
       setLikes(response.data.likes);
-    } catch (error) {
+    } catch {
       toast.error('Failed to update like');
     }
   };
@@ -313,7 +313,7 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
                         placeholder="Write a comment..."
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
-                        className="min-h-[80px]"
+                        className="min-h-20"
                       />
                       <Button type="submit" disabled={loading || !newComment.trim()} className="gap-2">
                         <Send className="h-4 w-4" />
