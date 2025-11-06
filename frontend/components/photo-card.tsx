@@ -31,6 +31,7 @@ interface PhotoCardProps {
 
 export function PhotoCard({ photo, onClick, isLiked = false }: PhotoCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const { settings } = useSettings();
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
   const imageUrl = photo.imageUrl.startsWith('http') 
