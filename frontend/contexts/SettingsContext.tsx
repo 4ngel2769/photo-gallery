@@ -40,6 +40,7 @@ const defaultSettings: Settings = {
   showLikes: true,
   showViews: true,
   showComments: true,
+  enableImageZoom: true,
   navbarTitleEnabled: true,
   navbarTitle: 'Photo Gallery',
   navbarColor: '#000000',
