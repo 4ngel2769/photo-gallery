@@ -165,11 +165,11 @@ router.get('/google', passport.authenticate('google', {
 // @desc    Google OAuth callback
 // @access  Public
 router.get('/google/callback', 
-  passport.authenticate('google', { session: false, failureRedirect: `${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=oauth_failed` }),
+  passport.authenticate('google', { session: false, failureRedirect: `${process.env.FRONTEND_URL || 'http://localhost:3001'}/login?error=oauth_failed` }),
   (req, res) => {
     const token = generateToken(req.user._id);
     // Redirect to frontend with token
-    res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/auth/callback?token=${token}`);
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3001'}/auth/callback?token=${token}`);
   }
 );
 
@@ -185,11 +185,11 @@ router.get('/github', passport.authenticate('github', {
 // @desc    GitHub OAuth callback
 // @access  Public
 router.get('/github/callback',
-  passport.authenticate('github', { session: false, failureRedirect: `${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=oauth_failed` }),
+  passport.authenticate('github', { session: false, failureRedirect: `${process.env.FRONTEND_URL || 'http://localhost:3001'}/login?error=oauth_failed` }),
   (req, res) => {
     const token = generateToken(req.user._id);
     // Redirect to frontend with token
-    res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/auth/callback?token=${token}`);
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3001'}/auth/callback?token=${token}`);
   }
 );
 

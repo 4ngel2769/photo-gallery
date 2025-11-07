@@ -18,7 +18,7 @@ import themeRoutes from './routes/themes.js';
 import settingsRoutes from './routes/settings.js';
 
 // Load environment variables
-dotenv.config();
+dotenv.config({ path: '.env.local' });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
