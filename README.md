@@ -142,7 +142,7 @@ The app supports OAuth login with Google and GitHub:
 
 ## Environment Variables
 
-All configuration is in the root `.env` file. The setup uses three simple URL variables:
+All configuration is in the root `.env` file:
 
 ```env
 # Application URLs (change to your domain for production)
@@ -154,6 +154,9 @@ APP_URL_AUTH=http://localhost:3001         # Auth URL (usually same as APP_URL)
 # APP_URL=https://photos.yourdomain.com
 # APP_URL_BACKEND=https://api.yourdomain.com
 # APP_URL_AUTH=https://photos.yourdomain.com
+
+# Database
+MONGODB_URI=mongodb://localhost:27017/photo-gallery
 
 # Secrets
 JWT_SECRET=your-secret-key
