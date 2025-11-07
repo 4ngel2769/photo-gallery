@@ -16,12 +16,17 @@ import commentRoutes from './routes/comments.js';
 import authRoutes from './routes/auth.js';
 import themeRoutes from './routes/themes.js';
 import settingsRoutes from './routes/settings.js';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-// Load environment variables
-dotenv.config({ path: '.env.local' });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Load environment variables from root .env file
+dotenv.config({ path: join(__dirname, '..', '.env') });
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.BACKEND_PORT || process.env.PORT || 5000;
 
 // Security middleware with image loading support
 app.use(helmet({
