@@ -73,16 +73,28 @@ Password: ${adminPassword}
 Admin Panel: http://localhost:3000/sudo
 `;
 
-    writeFileSync(passwordFilePath, passwordContent, 'utf8');
-    
-    console.log('');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('✅ ROOT ADMIN USER CREATED');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('📧 Email:    ', adminEmail);
-    console.log('🔑 Password: ', adminPassword);
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('💾 Password saved to: .pswd');
+    try {
+      writeFileSync(passwordFilePath, passwordContent, 'utf8');
+      console.log('');
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('✅ ROOT ADMIN USER CREATED');
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('📧 Email:    ', adminEmail);
+      console.log('🔑 Password: ', adminPassword);
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('💾 Password saved to: .pswd');
+    } catch (error) {
+      // If we can't write to the file, just log the credentials
+      console.log('');
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('✅ ROOT ADMIN USER CREATED');
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('📧 Email:    ', adminEmail);
+      console.log('🔑 Password: ', adminPassword);
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('⚠️  Could not save password to file. Please save these credentials now!');
+      // Don't throw the error - the admin user is created successfully
+    }
     console.log('');
     console.log('⚠️  CRITICAL SECURITY STEPS:');
     console.log('   1. Copy the password above immediately');
