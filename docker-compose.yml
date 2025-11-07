@@ -45,9 +45,10 @@ services:
       UPLOAD_DIR: ${UPLOAD_DIR:-uploads/photos}
       ROOT_ADMIN_EMAIL: ${ROOT_ADMIN_EMAIL:-admin@photogallery.local}
     volumes:
-      - ./backend/uploads:/app/uploads
+      - photo_gallery_uploads:/app/uploads
       - ./backend:/app
       - photo_gallery_backend_node_modules:/app/node_modules
+    user: "1000:1000"  # This will run the container as your user ID (typically 1000 on Linux)
     depends_on:
       mongodb:
         condition: service_healthy
@@ -102,4 +103,6 @@ volumes:
   photo_gallery_backend_node_modules:
     driver: local
   photo_gallery_frontend:
+    driver: local
+  photo_gallery_uploads:
     driver: local
