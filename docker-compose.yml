@@ -10,6 +10,7 @@ services:
       # - "27017:27017"
     volumes:
       - photo_gallery_data:/data/db
+      - photo_gallery_configdb:/data/configdb
     networks:
       - photo-gallery-network
     healthcheck:
@@ -95,6 +96,8 @@ networks:
 
 volumes:
   photo_gallery_data:
+    driver: local
+  photo_gallery_configdb:
     driver: local
   photo_gallery_backend_node_modules:
     driver: local
