@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { photosAPI, usersAPI } from '@/lib/api';
 import { Image, Users, MessageSquare, Heart } from 'lucide-react';
+import type { Photo } from '@/types/photo';
 
 export function AdminStats() {
   const [stats, setStats] = useState({
@@ -24,17 +25,17 @@ export function AdminStats() {
           usersAPI.getAll(),
         ]);
 
-        const photos = photosRes.data.photos || [];
+        const photos = (photosRes.data.photos || []) as Photo[];
         const users = usersRes.data || [];
 
         // Calculate total likes across all photos
-        const totalLikes = photos.reduce((acc: number, photo: unknown) => acc + (photo.likes || 0), 0);
+        const totalLikes = photos.reduce((acc: number, photo: Photo) => acc + (photo.likes || 0), 0);
 
         // Calculate stats
         const now = new Date();
         const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-        const recentPhotos = photos.filter((p: any) => new Date(p.createdAt) > sevenDaysAgo).length;
+        const recentPhotos = photos.filter((photo: Photo) => new Date(photo.createdAt) > sevenDaysAgo).length;
 
         setStats({
           totalPhotos: photos.length,
