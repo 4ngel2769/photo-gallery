@@ -165,6 +165,21 @@ GITHUB_CLIENT_SECRET=your-github-client-secret
 
 <!-- See [ENV_SETUP.md](./ENV_SETUP.md) for complete documentation. -->
 
+## 🔐 Admin Access
+
+The app automatically creates an admin user on first startup. Configure the credentials in `.env`:
+
+```env
+ROOT_ADMIN_EMAIL=admin@photogallery.local
+ROOT_ADMIN_PASSWORD=SecureAdmin2024!
+```
+
+**Access admin panel**: `http://localhost:3001/sudo`
+
+⚠️ **Important**: You'll be prompted to change the password on first login.
+
+See [ADMIN_SETUP.md](./ADMIN_SETUP.md) for detailed documentation.
+
 ## Docker Deployment
 
 ### Development

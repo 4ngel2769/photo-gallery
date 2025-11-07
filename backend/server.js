@@ -8,6 +8,7 @@ import compression from 'compression';
 import morgan from 'morgan';
 import session from 'express-session';
 import passport from './config/passport.js';
+import { initializeAdmin } from './utils/initAdmin.js';
 
 // Import routes
 import photoRoutes from './routes/photos.js';
@@ -108,8 +109,11 @@ app.use((req, res) => {
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/photo-gallery')
-  .then(() => {
+  .then(async () => {
     console.log('✅ Connected to MongoDB');
+    
+    // Initialize admin user
+    await initializeAdmin();
     
     // Start server
     app.listen(PORT, () => {
