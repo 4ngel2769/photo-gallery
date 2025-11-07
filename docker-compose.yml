@@ -43,7 +43,6 @@ services:
       MAX_FILE_SIZE: ${MAX_FILE_SIZE:-10485760}
       UPLOAD_DIR: ${UPLOAD_DIR:-uploads/photos}
       ROOT_ADMIN_EMAIL: ${ROOT_ADMIN_EMAIL:-admin@photogallery.local}
-      ROOT_ADMIN_PASSWORD: ${ROOT_ADMIN_PASSWORD:-admin123}
     volumes:
       - ./backend/uploads:/app/uploads
       - ./backend:/app

@@ -9,6 +9,9 @@ lerna-debug.log*
 .vscode/
 .md
 
+# Admin password file (contains auto-generated password)
+.pswd
+
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 

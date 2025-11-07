@@ -167,16 +167,25 @@ GITHUB_CLIENT_SECRET=your-github-client-secret
 
 ## 🔐 Admin Access
 
-The app automatically creates an admin user on first startup. Configure the credentials in `.env`:
+The app automatically creates an admin user on first startup with a **secure randomly-generated password** (using `crypto.randomBytes(64)`).
+
+Configure the admin email in `.env`:
 
 ```env
 ROOT_ADMIN_EMAIL=admin@photogallery.local
-ROOT_ADMIN_PASSWORD=SecureAdmin2024!
 ```
+
+On first startup:
+1. A secure 64-character password is auto-generated
+2. Password is printed to console
+3. Password is saved to `.pswd` file
 
 **Access admin panel**: `http://localhost:3001/sudo`
 
-⚠️ **Important**: You'll be prompted to change the password on first login.
+⚠️ **Important**: 
+- Copy the password from console or `.pswd` file immediately
+- Change the password on first login
+- Delete the `.pswd` file after securing your password
 
 See [ADMIN_SETUP.md](./ADMIN_SETUP.md) for detailed documentation.
 

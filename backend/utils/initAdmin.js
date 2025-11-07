@@ -1,5 +1,17 @@
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
+import { writeFileSync, existsSync } from 'fs';
+import { join } from 'path';
 import User from '../models/User.js';
+
+/**
+ * Generate a secure random password using crypto
+ * @param {number} length - Length of the password (default: 64)
+ * @returns {string} - Base64 encoded random password
+ */
+const generateSecurePassword = (length = 64) => {
+  return crypto.randomBytes(length).toString('base64').slice(0, length);
+};
 
 /**
  * Initialize admin user if it doesn't exist
@@ -7,9 +19,9 @@ import User from '../models/User.js';
  */
 export const initializeAdmin = async () => {
   try {
-    // Get admin credentials from environment or use defaults
+    // Get admin email from environment or use default
     const adminEmail = process.env.ROOT_ADMIN_EMAIL || 'admin@photogallery.local';
-    const adminPassword = process.env.ROOT_ADMIN_PASSWORD || 'admin123';
+    const passwordFilePath = join(process.cwd(), '.pswd');
 
     // Check if admin already exists
     const existingAdmin = await User.findOne({ email: adminEmail });
@@ -26,11 +38,15 @@ export const initializeAdmin = async () => {
       return existingAdmin;
     }
 
-    // Create root admin user
-    console.log('🔧 Creating admin user...');
+    // Generate secure random password
+    console.log('🔧 Creating admin user with secure random password...');
+    const adminPassword = generateSecurePassword(64);
+    
+    // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(adminPassword, salt);
 
+    // Create root admin user
     const rootAdmin = new User({
       username: adminEmail.split('@')[0], // Use email prefix as username
       email: adminEmail,
@@ -44,15 +60,41 @@ export const initializeAdmin = async () => {
 
     await rootAdmin.save();
     
+    // Save password to .pswd file
+    const passwordContent = `# PHOTO GALLERY - ROOT ADMIN PASSWORD
+# Generated: ${new Date().toISOString()}
+# Email: ${adminEmail}
+# 
+# ⚠️  IMPORTANT SECURITY NOTES:
+# - Change this password immediately after first login
+# - Delete this file after saving the password securely
+# - Never commit this file to version control
+# - This password was auto-generated using crypto.randomBytes(64)
+
+Email: ${adminEmail}
+Password: ${adminPassword}
+
+Admin Panel: http://localhost:3000/sudo
+`;
+
+    writeFileSync(passwordFilePath, passwordContent, 'utf8');
+    
     console.log('');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('✅ ROOT ADMIN USER CREATED');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('📧 Email:    ', adminEmail);
     console.log('🔑 Password: ', adminPassword);
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('⚠️  IMPORTANT: Change password on first login!');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('💾 Password saved to: .pswd');
+    console.log('');
+    console.log('⚠️  CRITICAL SECURITY STEPS:');
+    console.log('   1. Copy the password above immediately');
+    console.log('   2. Login and change the password');
+    console.log('   3. Delete the .pswd file after securing your password');
+    console.log('');
     console.log('🔐 Admin panel: http://localhost:3000/sudo');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('');
 
     return rootAdmin;
