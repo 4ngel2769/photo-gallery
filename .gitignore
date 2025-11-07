@@ -137,3 +137,12 @@ dist
 .yarn/install-state.gz
 .pnp.*
 *.md
+
+# Docker volumes and data
+mongodb_data/
+mongodb_data_dev/
+
+# Backend uploads (keep structure, ignore files)
+backend/uploads/**/*
+!backend/uploads/photos/.gitkeep
+

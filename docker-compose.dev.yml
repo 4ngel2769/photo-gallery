@@ -1,0 +1,87 @@
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: photo-gallery-mongodb-dev
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: photo-gallery
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data_dev:/data/db
+    networks:
+      - photo-gallery-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API (Development with hot-reload)
+  backend:
+    image: node:20-alpine
+    container_name: photo-gallery-backend-dev
+    restart: unless-stopped
+    working_dir: /app
+    command: npm run dev
+    ports:
+      - "${BACKEND_PORT:-5000}:5000"
+    environment:
+      PORT: 5000
+      NODE_ENV: development
+      MONGODB_URI: mongodb://mongodb:27017/photo-gallery
+      JWT_SECRET: ${JWT_SECRET}
+      SESSION_SECRET: ${SESSION_SECRET}
+      FRONTEND_URL: http://localhost:${FRONTEND_PORT:-3001}
+      CLIENT_URL: http://localhost:${FRONTEND_PORT:-3001}
+      API_URL: http://localhost:${BACKEND_PORT:-5000}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      MAX_FILE_SIZE: ${MAX_FILE_SIZE:-10485760}
+      UPLOAD_DIR: ${UPLOAD_DIR:-uploads/photos}
+      ROOT_ADMIN_PASSWORD: ${ROOT_ADMIN_PASSWORD:-admin123}
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - ./backend/uploads:/app/uploads
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - photo-gallery-network
+
+  # Frontend Next.js (Development with hot-reload)
+  frontend:
+    image: node:20-alpine
+    container_name: photo-gallery-frontend-dev
+    restart: unless-stopped
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "${FRONTEND_PORT:-3001}:3000"
+    environment:
+      NODE_ENV: development
+      NEXTAUTH_URL: http://localhost:${FRONTEND_PORT:-3001}
+      NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT:-5000}/api
+      NEXT_PUBLIC_SITE_NAME: ${NEXT_PUBLIC_SITE_NAME:-Photo Gallery}
+      NEXT_PUBLIC_SITE_DESCRIPTION: ${NEXT_PUBLIC_SITE_DESCRIPTION:-A beautiful photo gallery}
+      WATCHPACK_POLLING: true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+    networks:
+      - photo-gallery-network
+
+networks:
+  photo-gallery-network:
+    driver: bridge
+
+volumes:
+  mongodb_data_dev:
+    driver: local
