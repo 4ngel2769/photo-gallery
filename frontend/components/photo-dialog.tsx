@@ -72,7 +72,8 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState('');
 
-  const API_URL = process.env.NEXT_PUBLIC_APP_URL_BACKEND ? `${process.env.NEXT_PUBLIC_APP_URL_BACKEND}/api` : 'http://localhost:5000/api';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL_BACKEND || 'http://localhost:5000';
+  const API_URL = `${baseUrl}/api`;
 
   const checkLikeStatus = useCallback(async () => {
     if (!photo) return;
@@ -192,7 +193,7 @@ export function PhotoDialog({ photo, isOpen, onClose }: PhotoDialogProps) {
 
   const imageUrl = photo.imageUrl.startsWith('http') 
     ? photo.imageUrl 
-    : `${API_URL.replace('/api', '')}${photo.imageUrl}`;
+    : `${baseUrl}${photo.imageUrl}`;
 
   return (
     <AnimatePresence mode="wait">
