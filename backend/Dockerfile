@@ -17,14 +17,17 @@ RUN mkdir -p uploads/photos && \
     addgroup -S appgroup && \
     adduser -S -G appgroup appuser && \
     chown -R appuser:appgroup /app && \
-    chmod -R 755 /app
+    chmod -R 755 /app && \
+    chmod -R 777 /app/uploads && \
+    touch /app/.pswd && \
+    chown appuser:appgroup /app/.pswd && \
+    chmod 600 /app/.pswd
 
 # Switch to non-root user
 USER appuser
 
-# Ensure uploads directory exists and is writable
-RUN mkdir -p /app/uploads/photos && \
-    chmod -R 755 /app/uploads
+# Verify directory permissions
+RUN mkdir -p /app/uploads/photos
 
 # Expose port
 EXPOSE 5000
