@@ -12,17 +12,19 @@ RUN npm ci --only=production
 # Copy source code
 COPY . .
 
-# Create uploads directory and set permissions
+# Create uploads directory and set up user
 RUN mkdir -p uploads/photos && \
-    addgroup -g 1000 appuser && \
-    adduser -D -G appuser -u 1000 appuser && \
-    chown -R appuser:appuser /app
+    addgroup -S appgroup && \
+    adduser -S -G appgroup appuser && \
+    chown -R appuser:appgroup /app && \
+    chmod -R 755 /app
 
 # Switch to non-root user
 USER appuser
 
-# Create necessary directories with correct permissions
-RUN mkdir -p /app/uploads/photos
+# Ensure uploads directory exists and is writable
+RUN mkdir -p /app/uploads/photos && \
+    chmod -R 755 /app/uploads
 
 # Expose port
 EXPOSE 5000
