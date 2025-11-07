@@ -6,8 +6,8 @@ services:
     restart: unless-stopped
     environment:
       MONGO_INITDB_DATABASE: photo-gallery
-    # ports:
-      # - "27017:27017"
+    ports:
+      - "27020:27017"
     volumes:
       - photo_gallery_data:/data/db
       - photo_gallery_configdb:/data/configdb
