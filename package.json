@@ -12,6 +12,8 @@
     "build:frontend": "cd frontend && npm run build"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
+    "dotenv-cli": "^11.0.0",
     "shadcn": "^3.5.0"
   },
   "dependencies": {
