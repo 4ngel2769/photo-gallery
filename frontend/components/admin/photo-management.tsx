@@ -24,6 +24,7 @@ import {
 import { photosAPI } from '@/lib/api';
 import { Pencil, Trash2, Eye, Heart, MessageSquare, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 interface Photo {
   _id: string;
@@ -141,13 +142,15 @@ export function PhotoManagement() {
                   filteredPhotos.map((photo) => (
                     <TableRow key={photo._id}>
                       <TableCell>
-                        <div className="relative w-16 h-16 rounded overflow-hidden bg-muted">
-                          <img
-                            src={`${process.env.NEXT_PUBLIC_API_URL}${photo.imageUrl}`}
-                            alt={photo.title}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
+                        <Image
+                          src={`${process.env.NEXT_PUBLIC_APP_URL_BACKEND || 'http://localhost:5000'}${photo.imageUrl}`}
+                          alt={photo.title}
+                          width={64}
+                          height={64}
+                          className="w-full h-full object-cover"
+                          style={{ objectFit: 'cover' }}
+                          unoptimized
+                        />
                       </TableCell>
                       <TableCell className="font-medium">{photo.title}</TableCell>
                       <TableCell>

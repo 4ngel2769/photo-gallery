@@ -41,7 +41,7 @@ export default function RegisterPage() {
   };
 
   const handleOAuthSignup = (provider: 'google' | 'github') => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+    const apiUrl = process.env.NEXT_PUBLIC_APP_URL_BACKEND ? `${process.env.NEXT_PUBLIC_APP_URL_BACKEND}/api` : 'http://localhost:5000/api';
     window.location.href = `${apiUrl}/auth/${provider}`;
   };
 

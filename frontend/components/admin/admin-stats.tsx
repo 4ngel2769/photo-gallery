@@ -28,7 +28,7 @@ export function AdminStats() {
         const users = usersRes.data || [];
 
         // Calculate total likes across all photos
-        const totalLikes = photos.reduce((acc: number, photo: any) => acc + (photo.likes || 0), 0);
+        const totalLikes = photos.reduce((acc: number, photo: unknown) => acc + (photo.likes || 0), 0);
 
         // Calculate stats
         const now = new Date();

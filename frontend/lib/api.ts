@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.NEXT_PUBLIC_APP_URL_BACKEND ? `${process.env.NEXT_PUBLIC_APP_URL_BACKEND}/api` : 'http://localhost:5000/api';
 
 // Create axios instance
 const api = axios.create({
@@ -44,7 +44,7 @@ export const photosAPI = {
     api.post('/photos', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
-  update: (id: string, data: any) => api.put(`/photos/${id}`, data),
+  update: (id: string, data: unknown) => api.put(`/photos/${id}`, data),
   delete: (id: string) => api.delete(`/photos/${id}`),
   like: (id: string, sessionId?: string) =>
     api.post(`/photos/${id}/like`, { sessionId }),

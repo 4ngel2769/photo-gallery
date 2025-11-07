@@ -32,7 +32,7 @@ export function PhotoCard({ photo, onClick, isLiked = false }: PhotoCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const { settings } = useSettings();
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+  const API_URL = process.env.NEXT_PUBLIC_APP_URL_BACKEND ? `${process.env.NEXT_PUBLIC_APP_URL_BACKEND}/api` : 'http://localhost:5000/api';
   const imageUrl = photo.imageUrl.startsWith('http') 
     ? photo.imageUrl 
     : `${API_URL.replace('/api', '')}${photo.imageUrl}`;

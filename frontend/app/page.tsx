@@ -78,18 +78,7 @@ export default function Home() {
     return () => window.removeEventListener('resize', handleResize);
   }, [columns]);
 
-  useEffect(() => {
-    loadPhotos(true);
-  }, [category, mood, sortBy]);
-
-  useEffect(() => {
-    if (photos.length > 0) {
-      const sessionId = getSessionId();
-      checkLikedPhotos(sessionId);
-    }
-  }, [photos]);
-
-  const loadPhotos = async (isNewSearch = false) => {
+  const loadPhotos = useCallback(async (isNewSearch = false) => {
     if (!hasMore && !isNewSearch) return;
     
     setLoading(true);
@@ -127,7 +116,18 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [category, mood, sortBy, searchQuery, page, hasMore]);
+
+  useEffect(() => {
+    loadPhotos(true);
+  }, [category, mood, sortBy, loadPhotos]);
+
+  useEffect(() => {
+    if (photos.length > 0) {
+      const sessionId = getSessionId();
+      checkLikedPhotos(sessionId);
+    }
+  }, [photos]);
 
   const checkLikedPhotos = async (sessionId: string) => {
     const liked = new Set<string>();
@@ -151,7 +151,7 @@ export default function Home() {
   };
 
   const debouncedSearch = useCallback(
-    (debounce as any)(searchFunction, 500),
+    (debounce as (fn: (query: string) => void, wait: number) => (query: string) => void)(searchFunction, 500),
     []
   );
 
