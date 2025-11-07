@@ -42,15 +42,11 @@ export const initializeAdmin = async () => {
     console.log('🔧 Creating admin user with secure random password...');
     const adminPassword = generateSecurePassword(64);
     
-    // Hash the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(adminPassword, salt);
-
     // Create root admin user
     const rootAdmin = new User({
       username: adminEmail.split('@')[0], // Use email prefix as username
       email: adminEmail,
-      password: hashedPassword,
+      password: adminPassword, // Let the User model's pre-save hook handle hashing
       displayName: 'Root Administrator',
       role: 'admin',
       isActive: true,
