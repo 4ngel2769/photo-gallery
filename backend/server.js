@@ -29,6 +29,9 @@ dotenv.config({ path: join(__dirname, '..', '.env') });
 const app = express();
 const PORT = process.env.BACKEND_PORT || process.env.PORT || 5000;
 
+// Trust proxy settings for reverse proxy/load balancer
+app.set('trust proxy', 1);
+
 // Security middleware with image loading support
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
@@ -44,8 +47,10 @@ app.use('/api/', limiter);
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
+  origin: process.env.APP_URL || 'http://localhost:3000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // Body parser

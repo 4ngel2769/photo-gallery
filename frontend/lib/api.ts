@@ -29,10 +29,10 @@ api.interceptors.request.use(
 // Auth API
 export const authAPI = {
   register: (data: { username: string; email: string; password: string; displayName?: string }) =>
-    api.post('/auth/register', data),
+    api.post('/auth/register', data, { withCredentials: true }),
   login: (data: { email: string; password: string }) =>
-    api.post('/auth/login', data),
-  getMe: () => api.get('/auth/me'),
+    api.post('/auth/login', data, { withCredentials: true }),
+  getMe: () => api.get('/auth/me', { withCredentials: true }),
   changePassword: (data: { currentPassword: string; newPassword: string }) =>
     api.post('/auth/change-password', data),
 };
