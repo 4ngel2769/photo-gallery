@@ -48,7 +48,6 @@ services:
       - photo_gallery_uploads:/app/uploads
       - ./backend:/app
       - photo_gallery_backend_node_modules:/app/node_modules
-    user: "1000:1000"  # This will run the container as your user ID (typically 1000 on Linux)
     depends_on:
       mongodb:
         condition: service_healthy
